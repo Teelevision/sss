@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Password Recovery Document</title>
+    <style>
+        body {
+            font-family: 'Fira Mono', 'Consolas', 'Menlo', 'Monaco', monospace;
+            text-align: center;
+            margin: 0;
+            padding: 2em;
+            background: #fff;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            margin-bottom: 1em;
+        }
+
+        .header img {
+            display: block;
+            margin: 0;
+            margin-right: 1em;
+            max-width: 70vw;
+            height: auto;
+            object-fit: contain;
+        }
+
+        .header h1 {
+            font-size: 1.2em;
+            margin: 0;
+        }
+
+        ul.words {
+            list-style: none;
+            padding: 0;
+            margin: 1em auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            counter-reset: word;
+        }
+
+        ul.words li {
+            margin: 0.2em 0.5em;
+            font-size: 1em;
+            position: relative;
+        }
+
+        ul.words li::before {
+            counter-increment: word;
+            content: counter(word) " ";
+            font-size: 0.7em;
+            color: #888;
+        }
+
+        .raw {
+            font-size: 0.7em;
+            word-break: break-all;
+        }
+
+        .switch-buttons {
+            margin-bottom: 1em;
+        }
+
+        .switch-buttons button {
+            padding: 0.5em 1em;
+            margin: 0 0.2em;
+            font-size: 1em;
+            cursor: pointer;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .switch-buttons button.active.clicked {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        .switch-buttons button.clicked {
+            background-color: #d4f7d4;
+            color: #333;
+            border-color: #7ecb7e;
+        }
+
+        @media print {
+            .switch-buttons {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="switch-buttons">
+        {{range $i, $share := .}}
+        <button {{if eq $i 0}}class="clicked active"{{end}}
+        type="button" id="share-btn-{{$i}}"
+        onclick="showShare({{$i}}); highlightButton({{$i}});">{{$i}}</button>
+        {{end}}
+    </div>
+
+    {{range $i, $share := .}}
+    <div class="share-block" id="share-block-{{$i}}" style="{{if ne $i 0}}display:none;{{end}}">
+        <div class="header">
+            <div>
+                <h1>Marius' Password Recovery Document</h1>
+                <p class="raw">{{$share.Share}}</p>
+                <p class="date"></p>
+            </div>
+            <img src="share_{{$share.Index}}.png" alt="QR Code">
+        </div>
+        <ul class="words">
+            {{range $share.Words}}<li>{{.}}</li>{{end}}
+        </ul>
+    </div>
+    {{end}}
+
+    <script>
+        function showShare(idx) {
+            var blocks = document.getElementsByClassName('share-block');
+            for (var i = 0; i < blocks.length; i++) {
+                blocks[i].style.display = (i === idx) ? '' : 'none';
+            }
+        }
+        function highlightButton(idx) {
+            document.getElementById('share-btn-' + idx).classList.toggle('clicked', true);
+            document.querySelectorAll('.switch-buttons button')
+                .forEach((btn, i) => btn.classList.toggle('active', i === idx));
+        }
+        document.querySelectorAll('.header .date')
+            .forEach(p => p.textContent = new Date().toISOString().slice(0, 10));
+    </script>
+</body>
+
+</html>

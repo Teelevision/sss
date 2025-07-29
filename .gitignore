@@ -1,0 +1,5 @@
+.vscode/
+output/
+vendor/
+.DS_Store
+shares.txt
