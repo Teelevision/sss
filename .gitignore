@@ -1,5 +1,6 @@
-.vscode/
-output/
-vendor/
+/.vscode
+/output
+/vendor
 .DS_Store
-shares.txt
+/shares.txt
+/sss
