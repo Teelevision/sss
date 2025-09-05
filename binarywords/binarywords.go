@@ -79,12 +79,16 @@ func encodeToIndexes(data []byte) iter.Seq[int] {
 	}
 }
 
-func Decode(words []string) []byte {
+func Decode(words []string) ([]byte, error) {
 	indexes := make([]int, 0, len(words))
 	for _, word := range words {
-		indexes = append(indexes, slices.Index(wordlist, word))
+		if idx := slices.Index(wordlist, word); idx != -1 {
+			indexes = append(indexes, idx)
+		} else {
+			return nil, fmt.Errorf("word %q not found in wordlist", word)
+		}
 	}
-	return decodeFromIndexes(indexes)
+	return decodeFromIndexes(indexes), nil
 }
 
 func decodeFromIndexes(indexes []int) []byte {

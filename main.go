@@ -174,7 +174,11 @@ func decode() {
 				end = len(words)
 			}
 			chunkWords := words[i:end]
-			data := binarywords.Decode(chunkWords)
+			data, err := binarywords.Decode(chunkWords)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "Error decoding words: %v\n", err)
+				os.Exit(1)
+			}
 			shareChunk := base64.URLEncoding.EncodeToString(data)
 			shareChunks = append(shareChunks, shareChunk)
 		}
